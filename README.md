@@ -1,0 +1,1 @@
+MiniGit on C for NSU project
