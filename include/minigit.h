@@ -1,10 +1,18 @@
 #ifndef MINIGIT_H
 #define MINIGIT_H
 
+#define _CRT_SECURE_NO_WARNINGS
+
+#ifdef _WIN32
+    #define strdup _strdup
+#endif
+
 #include <stdint.h>
 #include <time.h>
+#include <stddef.h>
+#include <stdbool.h>  
 
-#define HASH_HEX_LEN 40
+#define HASH_HEX_LEN 8
 #define MINIGIT_DIR ".minigit"
 #define OBJECTS_DIR "objects"
 #define REFS_DIR "refs"

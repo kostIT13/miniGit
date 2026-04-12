@@ -1,10 +1,11 @@
+#define _CRT_SECURE_NO_WARNINGS
+
 #include "repo.h"
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
-
 
 #ifdef _WIN32
     #include <direct.h>
@@ -34,7 +35,7 @@ int repo_exists(void) {
     return (stat(path, &st) == 0 && S_ISDIR(st.st_mode));
 }
 
-MinigitStatus init_repo(void) {
+MinigitStatus init_repo_disk(void) {
     char path[512];
 
     if (repo_exists()) {

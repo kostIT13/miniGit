@@ -7,6 +7,7 @@ MinigitStatus sha1_hash(const void *data, size_t len, char *output) {
         return MINIGIT_ERR_IO;
     }
 
+    // Простой хеш (для учебных целей)
     unsigned int hash = 5381;
     const unsigned char *ptr = (const unsigned char *)data;
     
@@ -14,7 +15,7 @@ MinigitStatus sha1_hash(const void *data, size_t len, char *output) {
         hash = ((hash << 5) + hash) + ptr[i];
     }
 
-    snprintf(output, HASH_HEX_LEN + 1, "%040x", hash);
+    snprintf(output, HASH_HEX_LEN + 1, "%08x", hash);
     
     return MINIGIT_OK;
 }

@@ -1,13 +1,16 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -std=c99 -I./headerss
-TARGET = minigit
+CFLAGS = -Wall -Wextra -std=gnu99 -I./include
+TARGET = minigit.exe
 
 SRC_DIR = src
 OBJ_DIR = obj
 
 SRCS = $(SRC_DIR)/main.c \
        $(SRC_DIR)/repo.c \
-       $(SRC_DIR)/hash.c
+       $(SRC_DIR)/hash.c \
+       $(SRC_DIR)/blob.c \
+       $(SRC_DIR)/tree.c \
+       $(SRC_DIR)/commit.c
 
 OBJS = $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
