@@ -332,7 +332,6 @@ void print_files(Commit *commit) {
     tree_print_files(commit->tree, 1);
 }
 
-// === ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ===
 
 Commit* commit_create(TreeNode *tree, const char *message, const char *parent_hash) {
     if (!tree || !message) return NULL;
@@ -400,7 +399,6 @@ MinigitStatus commit_save(Commit *commit) {
     
     fclose(f);
     
-    // === НОВОЕ: Сохраняем структуру дерева ===
     save_tree_structure(commit->tree, commit->hash);
     
     return MINIGIT_OK;
@@ -453,7 +451,6 @@ Commit* commit_load(const char *hash) {
     
     fclose(f);
     
-    // === НОВОЕ: Загружаем структуру дерева из файла ===
     commit->tree = load_tree_structure(hash);
     
     return commit;
