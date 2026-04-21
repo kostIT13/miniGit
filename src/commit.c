@@ -60,7 +60,6 @@ static char* save_tree_to_blob(TreeNode *tree) {
     return hash;
 }
 
-// === НОВЫЕ ФУНКЦИИ: Сохранение/загрузка дерева ===
 
 // Сохранить структуру дерева в отдельный файл
 static MinigitStatus save_tree_structure(TreeNode *tree, const char *commit_hash) {

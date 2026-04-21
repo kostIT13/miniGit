@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-// Windows compatibility: map strdup to _strdup
 #ifdef _WIN32
     #define strdup _strdup
 #endif
