@@ -1,0 +1,25 @@
+# Данные мини-Git (аналог .git/)
+.minigit/
+
+# Артефакты сборки
+*.o
+*.a
+*.so
+*.dll
+minigit
+minigit.exe
+build/
+
+# IDE и редакторы
+.vscode/
+.idea/
+*.sln
+
+# Системные файлы
+.DS_Store
+Thumbs.db
+
+# Временные файлы
+*.log
+*.tmp
+*~
