@@ -27,3 +27,24 @@ clean:
 	rm -rf $(OBJ_DIR) $(TARGET)
 
 .PHONY: all clean
+
+# тесты
+
+TEST_TARGET = test_minigit.exe
+TEST_SRC    = tests/test_minigit.c
+
+TEST_OBJS   := $(filter-out $(OBJ_DIR)/main.o,$(OBJS))
+
+test: $(TEST_TARGET)
+	@echo "\n🧪 Running tests...\n"
+	./$(TEST_TARGET)
+
+$(TEST_TARGET): $(TEST_SRC) $(TEST_OBJS)
+	@mkdir -p tests
+	$(CC) $(CFLAGS) -o $@ $(TEST_SRC) $(TEST_OBJS)
+
+test-clean:
+	rm -f $(TEST_TARGET)
+	rm -rf .minigit
+
+.PHONY: test test-clean
