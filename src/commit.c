@@ -155,8 +155,7 @@ Commit* init_repo(void) {
     
     TreeNode *empty_tree = tree_create();
     Commit *commit = commit_create(empty_tree, "Initial empty commit", NULL);
-    tree_free(empty_tree);
-
+    
     if (commit) {
         update_head(commit->hash);
     }
@@ -197,15 +196,9 @@ Commit* add_file(Commit *old_commit, const char *path, const char *content) {
         free(tree_hash);
     }
     
-    snprintf(new_commit->message, sizeof(new_commit->message), "Add file: %s", path);
-
-    char *content_fmt = format_commit_content(new_commit);
-    if (content_fmt) {
-        sha1_hash(content_fmt, strlen(content_fmt), new_commit->hash);
-        free(content_fmt);
-    }
+    // 🔧 ИСПРАВЛЕНИЕ: Не задаём сообщение и не сохраняем — это staging
+    new_commit->message[0] = '\0';
     
-    commit_save(new_commit);
     return new_commit;
 }
 
@@ -240,35 +233,27 @@ Commit* remove_file(Commit *old_commit, const char *path) {
         free(tree_hash);
     }
     
-    snprintf(new_commit->message, sizeof(new_commit->message), "Remove file: %s", path);
+    // 🔧 ИСПРАВЛЕНИЕ: Не задаём сообщение и не сохраняем — это staging
+    new_commit->message[0] = '\0';
     
-    char *content_fmt = format_commit_content(new_commit);
-    if (content_fmt) {
-        sha1_hash(content_fmt, strlen(content_fmt), new_commit->hash);
-        free(content_fmt);
-    }
-    
-    commit_save(new_commit);
     return new_commit;
 }
 
 Commit* commit(Commit *state, const char *message) {
     if (!state || !message) return NULL;
     
-    if (strlen(state->message) > 0) {
-        commit_save(state);
-        return state;
-    }
-    
+    // 🔧 ИСПРАВЛЕНИЕ: Всегда устанавливаем финальное сообщение
     strncpy(state->message, message, sizeof(state->message) - 1);
     state->message[sizeof(state->message) - 1] = '\0';
     
+    // Пересчитываем хеш с учётом нового сообщения
     char *content = format_commit_content(state);
     if (content) {
         sha1_hash(content, strlen(content), state->hash);
         free(content);
     }
     
+    // Сохраняем на диск и ОБЯЗАТЕЛЬНО обновляем HEAD
     commit_save(state);
     update_head(state->hash);
     
@@ -315,10 +300,10 @@ void print_history(Commit *commit) {
         
         if (current->parent_hash[0] != '\0') {
             Commit *parent = commit_load(current->parent_hash);
-            commit_free(current);
+            // 🔧 ИСПРАВЛЕНИЕ: Не освобождаем 'current' здесь!
+            // Коммит, переданный извне, освобождает вызывающий код.
             current = parent;
         } else {
-            commit_free(current);
             current = NULL;
         }
     }
