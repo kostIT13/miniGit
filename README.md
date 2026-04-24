@@ -193,3 +193,5 @@ make test_minigit.exe
 # Запуск конкретного теста (по имени функции)
 ./test_minigit.exe structural_sharing_unchanged_files
 ```
+
+
