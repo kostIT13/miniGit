@@ -43,8 +43,8 @@ Commit *c2 = add_file(c1, "file.txt", "v2");
 
 // c1 и c2 — разные объекты в памяти
 // При изменении c2, c1 остаётся неизменным
-assert(strcmp(get_file_content(c1, "file.txt"), "v1") == 0);  // ✓
-assert(strcmp(get_file_content(c2, "file.txt"), "v2") == 0);  // ✓
+assert(strcmp(get_file_content(c1, "file.txt"), "v1") == 0);  // correct
+assert(strcmp(get_file_content(c2, "file.txt"), "v2") == 0);  // correct
 ```
 
 ### Структурное разделение (Structural Sharing)
@@ -158,7 +158,7 @@ nmake -f Makefile.msvc
 
 # API Справочник miniGit
 
-## Основные функции (из ТЗ)
+## Основные функции
 
 | Функция | Описание | Параметры | Возвращает |
 |---------|----------|-----------|------------|
