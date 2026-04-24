@@ -36,7 +36,7 @@ TEST_SRC    = tests/test_minigit.c
 TEST_OBJS   := $(filter-out $(OBJ_DIR)/main.o,$(OBJS))
 
 test: $(TEST_TARGET)
-	@echo "\n🧪 Running tests...\n"
+	@echo "\nRunning tests...\n"
 	./$(TEST_TARGET)
 
 $(TEST_TARGET): $(TEST_SRC) $(TEST_OBJS)
