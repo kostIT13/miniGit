@@ -15,7 +15,6 @@
 #include <string.h>
 #include <time.h>
 
-// Форматирование содержимого коммита для хеширования
 static char* format_commit_content(Commit *commit) {
     char *content = (char*)malloc(2048);
     if (!content) return NULL;
@@ -38,7 +37,6 @@ static char* format_commit_content(Commit *commit) {
     return content;
 }
 
-// Упрощённое хеширование дерева (для совместимости)
 static char* save_tree_to_blob(TreeNode *tree) {
     if (!tree) return NULL;
     
@@ -61,7 +59,6 @@ static char* save_tree_to_blob(TreeNode *tree) {
 }
 
 
-// Сохранить структуру дерева в отдельный файл
 static MinigitStatus save_tree_structure(TreeNode *tree, const char *commit_hash) {
     if (!tree || !commit_hash) return MINIGIT_ERR_IO;
     
@@ -71,7 +68,6 @@ static MinigitStatus save_tree_structure(TreeNode *tree, const char *commit_hash
     FILE *f = fopen(path, "w");
     if (!f) return MINIGIT_ERR_IO;
     
-    // Рекурсивная запись дерева
     fprintf(f, "%d\n", tree->children_count);
     for (int i = 0; i < tree->children_count; i++) {
         TreeNode *child = &tree->children[i];
@@ -81,10 +77,7 @@ static MinigitStatus save_tree_structure(TreeNode *tree, const char *commit_hash
                 child->is_file ? 1 : 0,
                 child->children_count);
         
-        // Рекурсивно сохраняем поддерево если это папка
         if (!child->is_file && child->children && child->children_count > 0) {
-            // Для простоты сохраняем только первый уровень
-            // В полной реализации нужна рекурсия
         }
     }
     
@@ -92,7 +85,6 @@ static MinigitStatus save_tree_structure(TreeNode *tree, const char *commit_hash
     return MINIGIT_OK;
 }
 
-// Загрузить структуру дерева из файла
 static TreeNode* load_tree_structure(const char *commit_hash) {
     if (!commit_hash) return tree_create();
     
@@ -100,7 +92,8 @@ static TreeNode* load_tree_structure(const char *commit_hash) {
     snprintf(path, sizeof(path), "%s/%s/tree_%s.dat", MINIGIT_DIR, OBJECTS_DIR, commit_hash);
     
     FILE *f = fopen(path, "r");
-    if (!f) return tree_create();  // Если файла нет - пустое дерево
+    if (!f) 
+        return tree_create();  
     
     TreeNode *tree = tree_create();
     
@@ -135,7 +128,6 @@ static TreeNode* load_tree_structure(const char *commit_hash) {
     return tree;
 }
 
-// === ФУНКЦИИ ИЗ ТЗ ===
 
 Commit* init_repo(void) {
     if (repo_exists()) {
@@ -196,7 +188,6 @@ Commit* add_file(Commit *old_commit, const char *path, const char *content) {
         free(tree_hash);
     }
     
-    // 🔧 ИСПРАВЛЕНИЕ: Не задаём сообщение и не сохраняем — это staging
     new_commit->message[0] = '\0';
     
     return new_commit;
@@ -233,7 +224,6 @@ Commit* remove_file(Commit *old_commit, const char *path) {
         free(tree_hash);
     }
     
-    // 🔧 ИСПРАВЛЕНИЕ: Не задаём сообщение и не сохраняем — это staging
     new_commit->message[0] = '\0';
     
     return new_commit;
@@ -242,18 +232,15 @@ Commit* remove_file(Commit *old_commit, const char *path) {
 Commit* commit(Commit *state, const char *message) {
     if (!state || !message) return NULL;
     
-    // 🔧 ИСПРАВЛЕНИЕ: Всегда устанавливаем финальное сообщение
     strncpy(state->message, message, sizeof(state->message) - 1);
     state->message[sizeof(state->message) - 1] = '\0';
     
-    // Пересчитываем хеш с учётом нового сообщения
     char *content = format_commit_content(state);
     if (content) {
         sha1_hash(content, strlen(content), state->hash);
         free(content);
     }
     
-    // Сохраняем на диск и ОБЯЗАТЕЛЬНО обновляем HEAD
     commit_save(state);
     update_head(state->hash);
     
@@ -300,8 +287,6 @@ void print_history(Commit *commit) {
         
         if (current->parent_hash[0] != '\0') {
             Commit *parent = commit_load(current->parent_hash);
-            // 🔧 ИСПРАВЛЕНИЕ: Не освобождаем 'current' здесь!
-            // Коммит, переданный извне, освобождает вызывающий код.
             current = parent;
         } else {
             current = NULL;

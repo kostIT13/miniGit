@@ -5,12 +5,12 @@
 #include <stdbool.h>
 
 typedef struct TreeNode {
-    char *name;             // Имя файла или папки
-    char *hash;             // Хеш содержимого (для файла) или поддерева
-    bool is_file;           // true = файл (blob), false = папка (tree)
-    struct TreeNode *children; // Массив дочерних узлов (для папки)
-    int children_count;     // Количество дочерних узлов
-    int ref_count;          // Счетчик ссылок для structural sharing
+    char *name;            
+    char *hash;             
+    bool is_file;           
+    struct TreeNode *children; 
+    int children_count;     
+    int ref_count;        
 } TreeNode;
 
 TreeNode* tree_create(void);

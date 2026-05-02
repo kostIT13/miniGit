@@ -53,14 +53,12 @@ TEST(add_and_read_single_file) {
     Commit *staging = add_file(head, "hello.txt", "Hello MiniGit!\n");
     ASSERT_NOT_NULL(staging);
     
-    // Читаем обратно
     size_t len = 0;
     char *content = get_file_content(staging, "hello.txt", &len);
     ASSERT_NOT_NULL(content);
     ASSERT_STR_EQ(content, "Hello MiniGit!\n");
     free(content);
     
-    // Проверяем exists
     ASSERT(get_file_exists(staging, "hello.txt") == true, "file should exist");
     ASSERT(get_file_exists(staging, "missing.txt") == false, "missing file check");
     
@@ -73,7 +71,7 @@ TEST(commit_chain_preserves_parents) {
     system(CLEANUP_CMD);
     
     Commit *c0 = init_repo();
-    ASSERT_STR_EQ(c0->parent_hash, "");  // Первый коммит без родителя
+    ASSERT_STR_EQ(c0->parent_hash, "");  
     
     Commit *c1 = commit(add_file(c0, "a.txt", "content A"), "First commit");
     ASSERT_NOT_NULL(c1);
@@ -83,7 +81,7 @@ TEST(commit_chain_preserves_parents) {
     Commit *c2 = commit(add_file(c1, "b.txt", "content B"), "Second commit");
     ASSERT_NOT_NULL(c2);
     ASSERT_STR_EQ(c2->parent_hash, c1->hash);
-    ASSERT(c2 != c1, "commit should create new object");  // Новый объект
+    ASSERT(c2 != c1, "commit should create new object");  
     
     print_history(c2);
     
@@ -120,16 +118,14 @@ TEST(persistence_old_versions_accessible) {
 TEST(persistence_disk_reload) {
     system(CLEANUP_CMD);
     
-    // Создаём и коммитим
     Commit *c1 = commit(add_file(init_repo(), "persist.txt", "I survive restart"), "Persistent");
     char original_hash[HASH_HEX_LEN + 1];
     strncpy(original_hash, c1->hash, HASH_HEX_LEN);
     original_hash[HASH_HEX_LEN] = '\0';
     
-    // Эмулируем перезапуск: освобождаем и загружаем заново
     commit_free(c1);
     
-    Commit *reloaded = init_repo();  // Должен загрузить HEAD с диска
+    Commit *reloaded = init_repo();  
     ASSERT_NOT_NULL(reloaded);
     ASSERT_STR_EQ(reloaded->hash, original_hash);
     
@@ -149,7 +145,6 @@ TEST(structural_sharing_unchanged_files) {
     Commit *c0 = init_repo();
     Commit *c1 = commit(add_file(c0, "shared.txt", "unchanged data"), "v1");
     
-    // Обновляем ТОЛЬКО один файл
     Commit *c2 = commit(add_file(c1, "changed.txt", "new version"), "v2");
     
     const char *h1 = tree_get_file_hash(c1->tree, "shared.txt");
@@ -157,9 +152,8 @@ TEST(structural_sharing_unchanged_files) {
     
     ASSERT_NOT_NULL(h1);
     ASSERT_NOT_NULL(h2);
-    ASSERT_STR_EQ(h1, h2);  // Один и тот же блоб!
+    ASSERT_STR_EQ(h1, h2); 
     
-    // Контент в обеих версиях одинаковый
     size_t len = 0;
     char *data1 = get_file_content(c1, "shared.txt", &len);
     char *data2 = get_file_content(c2, "shared.txt", &len);
@@ -180,12 +174,10 @@ TEST(remove_nonexistent_file_returns_same) {
     Commit *head = init_repo();
     Commit *result = remove_file(head, "does_not_exist.txt");
     
-    // Если файла не было, можно вернуть тот же коммит (оптимизация)
-    // Проверяем, что хотя бы не упало
     ASSERT_NOT_NULL(result);
     
     commit_free(result);
-    if (result != head) commit_free(head);  // Если вернулся новый — освобождаем оба
+    if (result != head) commit_free(head);  
     system(CLEANUP_CMD);
 }
 
@@ -195,12 +187,10 @@ TEST(print_functions_no_crash) {
     Commit *c0 = init_repo();
     Commit *c1 = commit(add_file(c0, "test.c", "#include <stdio.h>"), "Add test.c");
     
-    // Просто проверяем, что функции не падают
     print_commit(c1);
     printf("\n");
     print_files(c1);
     printf("\n");
-    // print_history уже тестировалась выше
     
     commit_free(c1);
     commit_free(c0);
@@ -212,7 +202,6 @@ int main(int argc, char *argv[]) {
     printf("     miniGit Test Suite v1.0          \n");
     
     
-    // Можно запускать отдельные тесты по имени
     if (argc > 1) {
         const char *filter = argv[1];
         #define RUN_IF_MATCH(name) if (strcmp(#name, filter) == 0) RUN_TEST(name)
@@ -228,7 +217,6 @@ int main(int argc, char *argv[]) {
         return 1;
     }
     
-    // Запуск всех
     RUN_TEST(basic_init);
     RUN_TEST(add_and_read_single_file);
     RUN_TEST(commit_chain_preserves_parents);
