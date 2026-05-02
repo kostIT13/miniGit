@@ -1,6 +1,7 @@
 .minigit/
 
 *.o
+.o
 *.a
 *.so
 *.dll

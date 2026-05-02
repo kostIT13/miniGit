@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <limits.h>
 
 #ifdef _WIN32
     #define strdup _strdup
@@ -43,7 +44,7 @@ static TreeNode* clone_with_fresh_children(TreeNode *src) {
         }
         for (int i = 0; i < src->children_count; i++) {
             dst->children[i] = src->children[i];
-            if (dst->children[i].ref_count < 10000) {
+            if (dst->children[i].ref_count < UINT_MAX) {
                 dst->children[i].ref_count++;
             }
         }
@@ -132,20 +133,31 @@ static TreeNode* add_recursive(TreeNode *old_node, char **parts, int depth, cons
     }
 }
 
-TreeNode* tree_add_file(TreeNode *old_tree, const char *path, const char *hash) {
-    if (!old_tree || !path || !hash) return NULL;
+/* Разбивает путь на компоненты, возвращает количество частей.
+   parts должен быть массивом указателей размером не менее 100.
+   path_copy должен быть освобождён вызывающей стороной после использования.
+   Возвращает -1 при ошибке выделения памяти. */
+static int split_path(const char *path, char **parts, char **path_copy_out) {
+    *path_copy_out = strdup(path);
+    if (!*path_copy_out) return -1;
     
-    char *path_copy = strdup(path);
-    if (!path_copy) return NULL;
-    
-    char *parts[100] = {0};
     int count = 0;
-    char *token = strtok(path_copy, "/\\");
+    char *token = strtok(*path_copy_out, "/\\");
     while (token && count < 99) {
         parts[count++] = token;
         token = strtok(NULL, "/\\");
     }
     parts[count] = NULL;
+    return count;
+}
+
+TreeNode* tree_add_file(TreeNode *old_tree, const char *path, const char *hash) {
+    if (!old_tree || !path || !hash) return NULL;
+    
+    char *path_copy = NULL;
+    char *parts[100] = {0};
+    int count = split_path(path, parts, &path_copy);
+    if (count < 0) return NULL;
     
     TreeNode *result = add_recursive(old_tree, parts, 0, hash);
     
@@ -177,7 +189,7 @@ static TreeNode* remove_recursive(TreeNode *old_tree, char **parts, int depth) {
             for (int i = 0; i < old_tree->children_count; i++) {
                 if (i == idx) continue;  
                 new_tree->children[j] = old_tree->children[i];
-                if (new_tree->children[j].ref_count < 10000) {
+                if (new_tree->children[j].ref_count < UINT_MAX) {
                     new_tree->children[j].ref_count++;
                 }
                 j++;
@@ -202,7 +214,7 @@ static TreeNode* remove_recursive(TreeNode *old_tree, char **parts, int depth) {
                 new_tree->children[i] = *new_subtree;
             } else {
                 new_tree->children[i] = old_tree->children[i];
-                if (new_tree->children[i].ref_count < 10000) {
+                if (new_tree->children[i].ref_count < UINT_MAX) {
                     new_tree->children[i].ref_count++;
                 }
             }
@@ -215,17 +227,10 @@ TreeNode* tree_remove_file(TreeNode *old_tree, const char *path) {
     if (!old_tree || !path) return NULL;
     if (!tree_file_exists(old_tree, path)) return old_tree;
     
-    char *path_copy = strdup(path);
-    if (!path_copy) return NULL;
-    
+    char *path_copy = NULL;
     char *parts[100] = {0};
-    int count = 0;
-    char *token = strtok(path_copy, "/\\");
-    while (token && count < 99) {
-        parts[count++] = token;
-        token = strtok(NULL, "/\\");
-    }
-    parts[count] = NULL;
+    int count = split_path(path, parts, &path_copy);
+    if (count < 0) return NULL;
     
     TreeNode *result = remove_recursive(old_tree, parts, 0);
     

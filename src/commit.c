@@ -16,10 +16,11 @@
 #include <time.h>
 
 static char* format_commit_content(Commit *commit) {
-    char *content = (char*)malloc(2048);
+    /* Максимальная длина: tree 40 + parent 40 + author 64 + committer 64 + timestamp 20 + message 1024 + статические символы ~100 */
+    char *content = (char*)malloc(4096);
     if (!content) return NULL;
     
-    snprintf(content, 2048, 
+    snprintf(content, 4096,
              "tree %s\n"
              "parent %s\n"
              "author %s\n"

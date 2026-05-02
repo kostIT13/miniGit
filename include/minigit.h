@@ -12,7 +12,7 @@
 #include <stddef.h>
 #include <stdbool.h>  
 
-#define HASH_HEX_LEN 8
+#define HASH_HEX_LEN 40
 #define MINIGIT_DIR ".minigit"
 #define OBJECTS_DIR "objects"
 #define REFS_DIR "refs"
