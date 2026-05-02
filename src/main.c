@@ -19,6 +19,9 @@ void print_usage(const char *prog_name) {
     printf("  print_commit [hash]                Show commit info (HEAD if no hash)\n");
     printf("  print_history                      Show commit history\n");
     printf("  print_files                        List all files in current commit\n");
+    printf("  create_branch <branch> <commit>    Create a new branch at given commit hash\n");
+    printf("  get_branch_head <branch>           Show commit hash at branch head\n");
+    printf("  checkout <commit_hash>             Checkout a commit (detached HEAD)\n");
 }
 
 int main(int argc, char *argv[]) {
@@ -254,6 +257,68 @@ int main(int argc, char *argv[]) {
 
         print_files(commit);
         commit_free(commit);
+    }
+
+    else if (strcmp(argv[1], "create_branch") == 0) {
+        if (argc < 4) {
+            printf("Usage: %s create_branch <branch_name> <commit_hash>\n", argv[0]);
+            return 1;
+        }
+        const char *branch_name = argv[2];
+        const char *commit_hash = argv[3];
+        
+        Commit *commit = commit_load(commit_hash);
+        if (!commit) {
+            printf("Error: Commit %s not found.\n", commit_hash);
+            return 1;
+        }
+        
+        MinigitStatus status = create_branch(branch_name, commit);
+        commit_free(commit);
+        
+        if (status != MINIGIT_OK) {
+            printf("Failed to create branch.\n");
+            return 1;
+        }
+    }
+
+    else if (strcmp(argv[1], "get_branch_head") == 0) {
+        if (argc < 3) {
+            printf("Usage: %s get_branch_head <branch_name>\n", argv[0]);
+            return 1;
+        }
+        const char *branch_name = argv[2];
+        
+        Commit *commit = get_branch_head(branch_name);
+        if (!commit) {
+            printf("Error: Branch '%s' not found or cannot load commit.\n", branch_name);
+            return 1;
+        }
+        
+        printf("%s\n", commit->hash);
+        commit_free(commit);
+    }
+
+    else if (strcmp(argv[1], "checkout") == 0) {
+        if (argc < 3) {
+            printf("Usage: %s checkout <commit_hash>\n", argv[0]);
+            return 1;
+        }
+        const char *commit_hash = argv[2];
+        
+        Commit *commit = commit_load(commit_hash);
+        if (!commit) {
+            printf("Error: Commit %s not found.\n", commit_hash);
+            return 1;
+        }
+        
+        MinigitStatus status = checkout(commit);
+        commit_free(commit);
+        
+        if (status != MINIGIT_OK) {
+            printf("Failed to checkout.\n");
+            return 1;
+        }
     }
 
     else {
