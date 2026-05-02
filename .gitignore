@@ -8,6 +8,7 @@
 minigit
 minigit.exe
 build/
+obj/
 
 .vscode/
 .idea/
