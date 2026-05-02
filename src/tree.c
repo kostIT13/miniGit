@@ -133,10 +133,6 @@ static TreeNode* add_recursive(TreeNode *old_node, char **parts, int depth, cons
     }
 }
 
-/* Разбивает путь на компоненты, возвращает количество частей.
-   parts должен быть массивом указателей размером не менее 100.
-   path_copy должен быть освобождён вызывающей стороной после использования.
-   Возвращает -1 при ошибке выделения памяти. */
 static int split_path(const char *path, char **parts, char **path_copy_out) {
     *path_copy_out = strdup(path);
     if (!*path_copy_out) return -1;
