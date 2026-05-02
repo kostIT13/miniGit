@@ -85,7 +85,6 @@ TEST(commit_chain_preserves_parents) {
     ASSERT_STR_EQ(c2->parent_hash, c1->hash);
     ASSERT(c2 != c1, "commit should create new object");  // Новый объект
     
-    // Просто проверяем, что print_history не падает
     print_history(c2);
     
     commit_free(c2);
@@ -100,11 +99,9 @@ TEST(persistence_old_versions_accessible) {
     Commit *c0 = init_repo();
     Commit *c1 = commit(add_file(c0, "tmp.txt", "to delete"), "Add tmp");
     
-    // Удаляем файл в новой версии
     Commit *c2 = remove_file(c1, "tmp.txt");
     ASSERT_NOT_NULL(c2);
     
-    // 🔑 ПЕРСИСТЕНТНОСТЬ: старый коммит НЕ должен меняться
     ASSERT(get_file_exists(c2, "tmp.txt") == false, "file removed in c2");
     ASSERT(get_file_exists(c1, "tmp.txt") == true, "file still in c1");
     
