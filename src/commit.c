@@ -158,12 +158,12 @@ Commit* init_repo(void) {
 Commit* add_file(Commit *old_commit, const char *path, const char *content) {
     if (!old_commit || !path || !content) return NULL;
     
-    char content_hash[HASH_HEX_LEN + 1];
-    if (blob_save(content, strlen(content), content_hash) != MINIGIT_OK) {
+    char blob_hash[HASH_HEX_LEN + 1];
+    if (blob_save(content, strlen(content), blob_hash) != MINIGIT_OK) {
         return NULL;
     }
     
-    TreeNode *new_tree = tree_add_file(old_commit->tree, path, content_hash);
+    TreeNode *new_tree = tree_add_file(old_commit->tree, path, blob_hash);
     if (!new_tree) {
         return NULL;
     }
@@ -189,6 +189,15 @@ Commit* add_file(Commit *old_commit, const char *path, const char *content) {
     }
     
     new_commit->message[0] = '\0';
+    
+    // Compute commit hash and save to disk
+    char *commit_content = format_commit_content(new_commit);
+    if (commit_content) {
+        content_hash(commit_content, strlen(commit_content), new_commit->hash);
+        free(commit_content);
+    }
+    
+    commit_save(new_commit);
     
     return new_commit;
 }
@@ -225,6 +234,15 @@ Commit* remove_file(Commit *old_commit, const char *path) {
     }
     
     new_commit->message[0] = '\0';
+    
+    // Compute commit hash and save to disk
+    char *commit_content = format_commit_content(new_commit);
+    if (commit_content) {
+        content_hash(commit_content, strlen(commit_content), new_commit->hash);
+        free(commit_content);
+    }
+    
+    commit_save(new_commit);
     
     return new_commit;
 }
