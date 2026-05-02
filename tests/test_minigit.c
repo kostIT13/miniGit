@@ -241,24 +241,19 @@ TEST(duplicate_content_dedup) {
 }
 
 TEST(null_safety) {
-    /* Проверка, что функции не падают при передаче NULL */
     Commit *dummy = init_repo();
     ASSERT_NOT_NULL(dummy);
     
-    /* add_file с NULL аргументами */
     ASSERT(add_file(NULL, "path", "content") == NULL, "add_file with NULL commit should return NULL");
     ASSERT(add_file(dummy, NULL, "content") == NULL, "add_file with NULL path should return NULL");
     ASSERT(add_file(dummy, "path", NULL) == NULL, "add_file with NULL content should return NULL");
     
-    /* remove_file с NULL */
     ASSERT(remove_file(NULL, "path") == NULL, "remove_file with NULL commit should return NULL");
     ASSERT(remove_file(dummy, NULL) == NULL, "remove_file with NULL path should return NULL");
     
-    /* get_file_content с NULL */
     ASSERT(get_file_content(NULL, "path", NULL) == NULL, "get_file_content with NULL commit should return NULL");
     ASSERT(get_file_content(dummy, NULL, NULL) == NULL, "get_file_content with NULL path should return NULL");
     
-    /* tree_get_file_hash с NULL */
     ASSERT(tree_get_file_hash(NULL, "path") == NULL, "tree_get_file_hash with NULL tree should return NULL");
     ASSERT(tree_get_file_hash(dummy->tree, NULL) == NULL, "tree_get_file_hash with NULL path should return NULL");
     
@@ -285,7 +280,6 @@ TEST(print_functions_no_crash) {
 int main(int argc, char *argv[]) {
     printf("\n");
     printf("     miniGit Test Suite v1.0          \n");
-    
     
     if (argc > 1) {
         const char *filter = argv[1];
