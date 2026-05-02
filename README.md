@@ -64,7 +64,7 @@ assert(strcmp(get_file_content(c2, "file.txt"), "v2") == 0);  // correct
 ```bash
 // Хэш вычисляется от содержимого, а не от имени файла
 char hash[HASH_HEX_LEN + 1];
-sha1_hash("Hello World", 11, hash);  // → "2aae6c35c94fcfb415dbe95f408b9ce91ee846ed"
+content_hash("Hello World", 11, hash);  // → "2aae6c35c94fcfb415dbe95f408b9ce91ee846ed"
 
 // Одинаковое содержимое = одинаковый хэш = один объект
 blob_save("test", 4, hash1);  // hash1 = "9845fde1b08564a7c8c4cb6d0158bb3b19982201"

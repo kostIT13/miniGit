@@ -3,7 +3,7 @@
 #include <string.h>
 
 
-MinigitStatus sha1_hash(const void *data, size_t len, char *output) {
+MinigitStatus content_hash(const void *data, size_t len, char *output) {
     if (!data || !output) {
         return MINIGIT_ERR_IO;
     }

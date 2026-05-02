@@ -53,7 +53,7 @@ static char* save_tree_to_blob(TreeNode *tree) {
         return NULL;
     }
     
-    sha1_hash(buffer, strlen(buffer), hash);
+    content_hash(buffer, strlen(buffer), hash);
     free(buffer);
     
     return hash;
@@ -238,7 +238,7 @@ Commit* commit(Commit *state, const char *message) {
     
     char *content = format_commit_content(state);
     if (content) {
-        sha1_hash(content, strlen(content), state->hash);
+        content_hash(content, strlen(content), state->hash);
         free(content);
     }
     
@@ -331,7 +331,7 @@ Commit* commit_create(TreeNode *tree, const char *message, const char *parent_ha
     
     char *content = format_commit_content(commit);
     if (content) {
-        sha1_hash(content, strlen(content), commit->hash);
+        content_hash(content, strlen(content), commit->hash);
         free(content);
     }
     

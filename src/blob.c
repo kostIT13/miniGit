@@ -22,7 +22,7 @@ MinigitStatus blob_save(const void *content, size_t len, char *hash_output) {
     }
 
     
-    MinigitStatus status = sha1_hash(content, len, hash_output);
+    MinigitStatus status = content_hash(content, len, hash_output);
     if (status != MINIGIT_OK) {
         return status;
     }
