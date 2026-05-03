@@ -235,7 +235,6 @@ Commit* remove_file(Commit *old_commit, const char *path) {
     
     new_commit->message[0] = '\0';
     
-    // Compute commit hash and save to disk
     char *commit_content = format_commit_content(new_commit);
     if (commit_content) {
         content_hash(commit_content, strlen(commit_content), new_commit->hash);
