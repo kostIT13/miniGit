@@ -351,4 +351,35 @@ make test_minigit.exe
 ./test_minigit.exe structural_sharing_unchanged_files
 ```
 
+```bash
+# ═══════════════════════════════════════════════════════
+# ДЕМО ДЛЯ ЗАЩИТЫ (самое важное за 3 минуты)
+# ═══════════════════════════════════════════════════════
 
+# 1. Инициализация (10 сек)
+./minigit.exe init_repo
+
+# 2. Добавление файла (20 сек)
+./minigit.exe add_file hello.txt "Hello World"
+./minigit.exe commit "Initial commit"
+
+# 3. Изменение и история (40 сек)
+./minigit.exe add_file hello.txt "Updated"
+./minigit.exe commit "Update"
+./minigit.exe print_history
+# 👉 Показать 2 коммита в истории
+
+# 4. Персистентность (40 сек)
+# Скопировать хэш первого коммита из истории
+./minigit.exe print_commit <hash_первого>
+# 👉 Показать, что старая версия доступна
+
+# 5. Ветки (30 сек)
+./minigit.exe create_branch feature <hash>
+./minigit.exe get_branch_head feature
+# 👉 Показать, что ветка создана
+
+# 6. Финал (20 сек)
+./minigit.exe print_files
+echo "✅ Demo complete!"
+```
