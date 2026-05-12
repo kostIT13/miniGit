@@ -6,14 +6,14 @@
 #include <time.h>
 #include <stdbool.h>
 
-typedef struct {
-    char hash[HASH_HEX_LEN + 1];       
-    char parent_hash[HASH_HEX_LEN + 1]; 
-    char tree_hash[HASH_HEX_LEN + 1];   
-    TreeNode *tree;                     
-    char message[1024];                
-    char author[64];                    
-    time_t timestamp;                 
+typedef struct Commit {
+    char hash[HASH_HEX_LEN + 1];        // Хэш этого коммита (40 символов + \0)
+    char parent_hash[HASH_HEX_LEN + 1]; // Хэш родительского коммита
+    char tree_hash[HASH_HEX_LEN + 1];   // Хэш корневого дерева файлов
+    TreeNode *tree;                     // Указатель на дерево в памяти
+    char message[1024];                 // Сообщение коммита
+    char author[64];                    // Автор (например, "miniGit")
+    time_t timestamp;                   // Время создания (Unix timestamp)
 } Commit;
 
 Commit* init_repo(void);
